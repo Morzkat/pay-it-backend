@@ -1,39 +1,26 @@
-import { db } from "../db/drizzle/db";
-import { UserSchema } from "../db/drizzle/schemas";
-import { formatDate } from "../db/drizzle/helpers/dates";
-import { LoginUserDto, UserDto } from "../models/user.model";
-import { and, eq, or } from "drizzle-orm";
-import { userDtoColumnsSelector, userDtoSelectBuilder } from "../db/drizzle/selectors/user-selectors";
+import { LoginUserDto, UserDto } from "../models/dtos/user.dto";
+import UsersRepository from "../infrastructure/repositories/users.repository";
 
-export default class UserService {
+export default class UsersService {
+
+    _usersRepository: UsersRepository;
+    constructor() {
+        this._usersRepository = new UsersRepository();
+    }
 
     async getUsers(): Promise<UserDto[]> {
         try {
-            const users = await db.select({ ... userDtoSelectBuilder}).from(UserSchema) as UserDto[]
+            const users = await this._usersRepository.find();
             return users;
         } catch (error) {
             throw error;
         }
     }
-    
-    async login(user: LoginUserDto): Promise<void> {
+
+    async login(userDto: LoginUserDto): Promise<string> {
         try {
-            const result = await db.query.UserSchema.findFirst({
-                columns: userDtoColumnsSelector,
-                where: and(
-                    or(
-                        eq(UserSchema.username, user.username),
-                        eq(UserSchema.email, user.username)
-                    ),
-                    eq(UserSchema.password, user.password)
-                )
-            });
-
-            if(result) {
-                //log user....
-            }
-
-            
+            const user = this._usersRepository.findUser(userDto);
+            return 'user-token';
         } catch (error) {
             throw error;
         }

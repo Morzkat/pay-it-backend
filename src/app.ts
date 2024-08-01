@@ -1,5 +1,6 @@
 import express from 'express';
 import userRoutes from './controllers/users.controller'
+import transactionRoutes from './controllers/transactions.controller'
 
 const app = express();
 const port = 5200;
@@ -14,7 +15,8 @@ app.get('/', (req, res) => {
     })
 });
 
-app.use('/api', userRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/transactions', transactionRoutes)
 
 app.listen(port, () => {
     console.log(`Listenning port ${port}`)

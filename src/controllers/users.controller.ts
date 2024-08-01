@@ -1,16 +1,26 @@
 import { Router } from "express";
-import UserService from "../services/users.service";
+import UsersService from "../services/users.service";
 
 const router = Router();
-const userService = new UserService();
+const usersService = new UsersService();
 
-router.get('/users', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
-        const users = await userService.getUsers();
+        const users = await usersService.getUsers();
         res.json({ users: users })
     } catch (error) {
         next(error);
     }
-})
+});
+
+router.post('/login', async (req, res, next) => {
+    try {
+        const token = await usersService.login( { username: "r_test", password: "sdfsdf" } )
+    } catch (error) {
+        
+    }
+});
+
+
 
 export default router;
